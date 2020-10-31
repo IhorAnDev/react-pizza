@@ -1,14 +1,37 @@
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 
-const  SortPopup = ()=>{
-    const [visiblePopup,setVisiblePopup] = useState(false);
+const SortPopup = ({items}) => {
+    const [visiblePopup, setVisiblePopup] = useState(false);
+    const [activeItem, setActiveItem] = useState(0)
+    const sortRef = useRef();
+    const activeElement = items[activeItem]
 
-    const toggleVisiblePopup =()=>{setVisiblePopup(!visiblePopup)}
+    const selectItemActive = (index)=>{
+
+        setActiveItem(index)
+        setVisiblePopup(false)
+    }
+
+    const toggleVisiblePopup = () => {
+        setVisiblePopup(!visiblePopup)
+    }
+
+    const handleOutsideClick = (e) => {
+        let path = e.path || (e.composedPath && e.composedPath());
+        if (!path.includes(sortRef.current)) {
+
+            setVisiblePopup(false)
+        }
+    }
+
+    useEffect(() => {
+        document.body.addEventListener('click', handleOutsideClick);
+    }, []);
 
 
-    return(
-        <div className="sort">
+    return (
+        <div ref={sortRef} className="sort">
             <div className="sort__label">
                 <svg
                     width="10"
@@ -23,13 +46,19 @@ const  SortPopup = ()=>{
                     />
                 </svg>
                 <b>Сортировка по:</b>
-                <span onClick={toggleVisiblePopup}>популярности</span>
+                <span onClick={toggleVisiblePopup}>{activeElement}</span>
             </div>
-            { visiblePopup && <div className="sort__popup">
+            {visiblePopup && <div className="sort__popup">
                 <ul>
-                    <li className="active">популярности</li>
-                    <li>цене</li>
-                    <li>алфавиту</li>
+                    {items &&
+                    items.map((name, i) => (
+                        <li
+                            onClick={() => selectItemActive(i)}
+                            className={activeItem === i ? 'active' : ''}
+                            key={`${name}_${i}`}>
+                            {name}
+                        </li>
+                    ))}
                 </ul>
             </div>}
         </div>

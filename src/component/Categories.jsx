@@ -1,14 +1,12 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
-const Categories = ({items}) => {
+const Categories = ({items,onClickItem}) => {
 
     const [activeItem, selectItem] = useState()
 
     const selectItemActive = (index) => {
         selectItem(index)
     }
-
-    console.log(items)
 
     return (
         <div>
@@ -19,10 +17,15 @@ const Categories = ({items}) => {
                         onClick={() => selectItemActive(null)}>Все
                     </li>
 
-                    {items && items.map((name, i) => <li
-                        onClick={() => selectItemActive(i)}
-                        className={activeItem === i ? 'active' : ''}
-                        key={`${name}_${i}`}>{name}</li>)}
+                    {items &&
+                    items.map((name, i) => (
+                        <li
+                            className={activeItem === i ? 'active' : ''}
+                            onClick={() => selectItemActive(i)}
+                            key={`${name}_${i}`}>
+                            {name}
+                        </li>
+                    ))}
                 </ul>
             </div>
         </div>
